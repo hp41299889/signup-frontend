@@ -10,7 +10,9 @@ import {
   CheckboxOptionType,
 } from "antd";
 import { DefaultOptionType } from "antd/es/select";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Session } from "../api/interface";
+import { getAllSessions } from "../api/signup";
 
 const { Text } = Typography;
 const { Item, useForm } = Form;
@@ -27,18 +29,14 @@ const isShuttleOption: CheckboxOptionType[] = [
 
 const SignupForm: React.FC = () => {
   const [form] = useForm();
+  const [sessions, setSessions] = useState<Session[]>([]);
   const [showJoinNumberInput, setShowJoinNumberInput] =
     useState<boolean>(false);
 
-  const sessionOption: DefaultOptionType[] = [
-    { label: "台北一場，剩餘名額：10", value: 1 },
-    { label: "中彰場，剩餘名額：10", value: 2 },
-    { label: "台北二場，剩餘名額：10", value: 3 },
-    { label: "宜蘭場，剩餘名額：10", value: 4 },
-    { label: "高雄場，剩餘名額：10", value: 5 },
-    { label: "桃竹場，剩餘名額：0", value: 6, disabled: true },
-    { label: "台南場，剩餘名額：10", value: 7 },
-  ];
+  const sessionOption: DefaultOptionType[] = sessions.map((session) => {
+    const { id, name, joinLimit } = session;
+    return { label: `${name}，剩餘名額${joinLimit}`, value: id };
+  });
 
   const joinNumberOption: DefaultOptionType[] = [
     { label: "否，我一人參加2023家庭日", value: 1 },
@@ -64,6 +62,17 @@ const SignupForm: React.FC = () => {
   const onFormSubmit = (values: any) => {
     console.log(values);
   };
+
+  useEffect(() => {
+    getAllSessions().then((res) => {
+      if (res.data.status === "success") {
+        if (res.data.data.length > 0) {
+          setSessions(res.data.data);
+        }
+      }
+    });
+  }, []);
+  console.log(sessions);
 
   return (
     <Form form={form} onFinish={onFormSubmit} requiredMark={false}>
