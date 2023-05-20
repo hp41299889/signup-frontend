@@ -8,3 +8,14 @@ export interface Session {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface PostSignup {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  email: string;
+  joinNumber: number;
+  isParking: boolean;
+  isShuttle: boolean;
+  sessionId: number;
+}

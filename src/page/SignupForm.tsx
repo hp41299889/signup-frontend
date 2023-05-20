@@ -13,6 +13,7 @@ import { DefaultOptionType } from "antd/es/select";
 import React, { useState, useEffect } from "react";
 import { Session } from "../api/interface";
 import { getAllSessions } from "../api/signup";
+import { SignupFormData } from "./interface";
 
 const { Text } = Typography;
 const { Item, useForm } = Form;
@@ -59,7 +60,9 @@ const SignupForm: React.FC = () => {
     }
   };
 
-  const onFormSubmit = (values: any) => {
+  const onFormSubmit = (values: SignupFormData) => {
+    if (values.joinNumber > 3) {
+    }
     console.log(values);
   };
 
@@ -79,7 +82,7 @@ const SignupForm: React.FC = () => {
       <Row gutter={[6, { xs: 0 }]}>
         <Col xs={12}>
           <Item
-            name="employeeName"
+            name="name"
             label="姓名"
             rules={[{ required: true, message: "請輸入姓名" }]}
           >
@@ -88,7 +91,7 @@ const SignupForm: React.FC = () => {
         </Col>
         <Col xs={12}>
           <Item
-            name="employeeId"
+            name="id"
             label="員編"
             rules={[{ required: true, message: "請輸入員編" }]}
           >
@@ -118,7 +121,7 @@ const SignupForm: React.FC = () => {
         </Col>
         <Col xs={24}>
           <Item
-            name="session"
+            name="sessionId"
             label="參加場次"
             rules={[{ required: true, message: "請選擇參加場次" }]}
           >
