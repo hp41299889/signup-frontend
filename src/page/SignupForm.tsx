@@ -12,7 +12,7 @@ import {
 import { DefaultOptionType } from "antd/es/select";
 import React, { useState, useEffect } from "react";
 import { Session } from "../api/interface";
-import { getAllSessions } from "../api/signup";
+import { getAllSessions, postSignup } from "../api/signup";
 import { SignupFormData } from "./interface";
 
 const { Text } = Typography;
@@ -57,13 +57,22 @@ const SignupForm: React.FC = () => {
   const onJoinNumberChange = (number: number) => {
     if (number === 4) {
       setShowJoinNumberInput(true);
+    } else {
+      setShowJoinNumberInput(false);
     }
   };
 
-  const onFormSubmit = (values: SignupFormData) => {
-    if (values.joinNumber > 3) {
+  const onFormSubmit = async (values: SignupFormData) => {
+    if (showJoinNumberInput) {
+      values.joinNumber = values.extraJoinNumber;
     }
-    console.log(values);
+    await postSignup(values)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   useEffect(() => {
@@ -151,7 +160,20 @@ const SignupForm: React.FC = () => {
                   <Text type="danger">(含自己)</Text>
                 </>
               }
-              rules={[{ required: true, message: "請輸入總參加人數" }]}
+              rules={[
+                { required: true, message: "請輸入總參加人數" },
+                {
+                  validator(_, value) {
+                    if (!Number.isInteger(Number(value))) {
+                      return Promise.reject(new Error("總參加人數必須是整數"));
+                    }
+                    if (value <= 3) {
+                      return Promise.reject(new Error("總參加人數必須大於3人"));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
             >
               <Input inputMode="numeric" type="number" />
             </Item>
