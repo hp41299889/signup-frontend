@@ -8,14 +8,16 @@ import {
   Select,
   Typography,
   CheckboxOptionType,
+  Modal,
 } from "antd";
 import { DefaultOptionType } from "antd/es/select";
 import React, { useState, useEffect } from "react";
 import { Session } from "../api/interface";
-import { getAllSessions } from "../api/signup";
+import { getAllSessions, postSignup } from "../api/signup";
 import { SignupFormData } from "./interface";
+import { useNavigate } from "react-router-dom";
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 const { Item, useForm } = Form;
 
 const isParkingOption: CheckboxOptionType[] = [
@@ -29,14 +31,16 @@ const isShuttleOption: CheckboxOptionType[] = [
 ];
 
 const SignupForm: React.FC = () => {
+  const navigate = useNavigate();
   const [form] = useForm();
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [showShuttle, setShowShuttle] = useState<boolean>(true);
   const [showJoinNumberInput, setShowJoinNumberInput] =
     useState<boolean>(false);
 
   const sessionOption: DefaultOptionType[] = sessions.map((session) => {
-    const { id, name, joinLimit } = session;
-    return { label: `${name}，剩餘名額${joinLimit}`, value: id };
+    const { id, name, remainingNumber } = session;
+    return { label: `${name}，剩餘名額：${remainingNumber}`, value: id };
   });
 
   const joinNumberOption: DefaultOptionType[] = [
@@ -57,13 +61,51 @@ const SignupForm: React.FC = () => {
   const onJoinNumberChange = (number: number) => {
     if (number === 4) {
       setShowJoinNumberInput(true);
+    } else {
+      setShowJoinNumberInput(false);
     }
   };
 
-  const onFormSubmit = (values: SignupFormData) => {
-    if (values.joinNumber > 3) {
+  const onSessionChange = (sessionId: number) => {
+    const isSapplyShttle = sessions[sessionId - 1].isShuttle;
+    setShowShuttle(isSapplyShttle);
+    form.setFieldsValue({
+      isShuttle: isSapplyShttle,
+    });
+  };
+
+  const onFormSubmit = async (values: SignupFormData) => {
+    if (showJoinNumberInput) {
+      values.joinNumber = values.extraJoinNumber;
     }
-    console.log(values);
+    if (!showShuttle) {
+      values.isShuttle = false;
+    }
+    await postSignup(values)
+      .then((res) => {
+        console.log(res);
+        Modal.success({
+          title: <Text>報名成功！</Text>,
+          content: <Text>恭喜您已成功報名！</Text>,
+          onOk: () => {
+            navigate("/signup");
+          },
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        Modal.error({
+          title: <Text>報名失敗！</Text>,
+          content: (
+            <>
+              <Text>錯誤：</Text>
+              {err.response.data.message === "id is already exist" && (
+                <Text>此員編已重複報名</Text>
+              )}
+            </>
+          ),
+        });
+      });
   };
 
   useEffect(() => {
@@ -75,11 +117,13 @@ const SignupForm: React.FC = () => {
       }
     });
   }, []);
-  console.log(sessions);
 
   return (
     <Form form={form} onFinish={onFormSubmit} requiredMark={false}>
       <Row gutter={[6, { xs: 0 }]}>
+        <Col xs={24}>
+          <Title>報名表單</Title>
+        </Col>
         <Col xs={12}>
           <Item
             name="name"
@@ -125,7 +169,7 @@ const SignupForm: React.FC = () => {
             label="參加場次"
             rules={[{ required: true, message: "請選擇參加場次" }]}
           >
-            <Select options={sessionOption} />
+            <Select options={sessionOption} onChange={onSessionChange} />
           </Item>
         </Col>
         <Col xs={24}>
@@ -151,7 +195,20 @@ const SignupForm: React.FC = () => {
                   <Text type="danger">(含自己)</Text>
                 </>
               }
-              rules={[{ required: true, message: "請輸入總參加人數" }]}
+              rules={[
+                { required: true, message: "請輸入總參加人數" },
+                {
+                  validator(_, value) {
+                    if (!Number.isInteger(Number(value))) {
+                      return Promise.reject(new Error("總參加人數必須是整數"));
+                    }
+                    if (value <= 3) {
+                      return Promise.reject(new Error("總參加人數必須大於3人"));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
             >
               <Input inputMode="numeric" type="number" />
             </Item>
@@ -172,7 +229,11 @@ const SignupForm: React.FC = () => {
             label="是否接駁"
             rules={[{ required: true, message: "請選擇是否接駁" }]}
           >
-            <Radio.Group options={isShuttleOption} />
+            {showShuttle ? (
+              <Radio.Group options={isShuttleOption} />
+            ) : (
+              <Text type="danger">本場次不提供接駁</Text>
+            )}
           </Item>
         </Col>
         <Col xs={{ span: 6, offset: 18 }}>
