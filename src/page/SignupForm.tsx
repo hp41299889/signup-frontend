@@ -9,6 +9,9 @@ import {
   Typography,
   CheckboxOptionType,
   Modal,
+  RadioChangeEvent,
+  Divider,
+  Space,
 } from "antd";
 import { DefaultOptionType } from "antd/es/select";
 import React, { useState, useEffect } from "react";
@@ -38,9 +41,16 @@ const SignupForm: React.FC = () => {
   const [showJoinNumberInput, setShowJoinNumberInput] =
     useState<boolean>(false);
 
-  const sessionOption: DefaultOptionType[] = sessions.map((session) => {
+  const renderSessionOption = sessions.map((session) => {
     const { id, name, remainingNumber } = session;
-    return { label: `${name}，剩餘名額：${remainingNumber}`, value: id };
+    return (
+      <Radio value={id}>
+        <Text>
+          {name} <Divider type="vertical" />
+          剩餘名額：{remainingNumber}
+        </Text>
+      </Radio>
+    );
   });
 
   const joinNumberOption: DefaultOptionType[] = [
@@ -66,11 +76,11 @@ const SignupForm: React.FC = () => {
     }
   };
 
-  const onSessionChange = (sessionId: number) => {
-    const isSapplyShttle = sessions[sessionId - 1].isShuttle;
+  const onSessionChange = (e: RadioChangeEvent) => {
+    const isSapplyShttle = sessions[e.target.value - 1].isShuttle;
     setShowShuttle(isSapplyShttle);
     form.setFieldsValue({
-      isShuttle: isSapplyShttle,
+      isShuttle: null,
     });
   };
 
@@ -109,13 +119,17 @@ const SignupForm: React.FC = () => {
   };
 
   useEffect(() => {
-    getAllSessions().then((res) => {
-      if (res.data.status === "success") {
-        if (res.data.data.length > 0) {
-          setSessions(res.data.data);
+    getAllSessions()
+      .then((res) => {
+        if (res.data.status === "success") {
+          if (res.data.data.length > 0) {
+            setSessions(res.data.data);
+          }
         }
-      }
-    });
+      })
+      .catch((err) => {
+        setSessions([]);
+      });
   }, []);
 
   return (
@@ -169,7 +183,9 @@ const SignupForm: React.FC = () => {
             label="參加場次"
             rules={[{ required: true, message: "請選擇參加場次" }]}
           >
-            <Select options={sessionOption} onChange={onSessionChange} />
+            <Radio.Group onChange={onSessionChange}>
+              <Space direction="vertical">{renderSessionOption}</Space>
+            </Radio.Group>
           </Item>
         </Col>
         <Col xs={24}>
