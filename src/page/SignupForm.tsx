@@ -44,7 +44,7 @@ const SignupForm: React.FC = () => {
   const renderSessionOption = sessions.map((session) => {
     const { id, name, remainingNumber } = session;
     return (
-      <Radio value={id}>
+      <Radio value={id} key={`radio_${id}`}>
         <Text>
           {name} <Divider type="vertical" />
           剩餘名額：{remainingNumber}
@@ -95,8 +95,22 @@ const SignupForm: React.FC = () => {
       .then((res) => {
         console.log(res);
         Modal.success({
-          title: <Text>報名成功！</Text>,
-          content: <Text>恭喜您已成功報名！</Text>,
+          title: <Text>表單送出成功！</Text>,
+          content: (
+            <>
+              <p>
+                <Text>恭喜您已成功送出表單！</Text>
+              </p>
+              <p>
+                <Text>請至信箱收取驗證信件以完成報名</Text>
+              </p>
+              <p>
+                <Text type="danger">
+                  請留意垃圾郵件，驗證信件可能被歸類為垃圾信件
+                </Text>
+              </p>
+            </>
+          ),
           onOk: () => {
             navigate("/signup");
           },

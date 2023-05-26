@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { getEmailVerify } from "../api/signup";
 import { Modal } from "antd";
 
 const EmailVerify: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const hash = searchParams.get("hash");
+
   useEffect(() => {
     if (id && hash) {
       getEmailVerify(id, hash)
@@ -21,6 +23,9 @@ const EmailVerify: React.FC = () => {
                     <p>ID：{id}已驗證成功！</p>
                   </>
                 ),
+                onOk: () => {
+                  navigate("/home");
+                },
               });
             }
           } else {
