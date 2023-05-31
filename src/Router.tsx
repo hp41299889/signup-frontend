@@ -8,7 +8,7 @@ import Service from "./page/Service";
 
 const Router = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Routes>
         <Route element={<Base />}>
           <Route path="/home" element={<Home />} />
