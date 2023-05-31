@@ -41,7 +41,7 @@ const EmailVerify: React.FC = () => {
           console.error(err);
         });
     }
-  }, [hash, id]);
+  }, [hash, id, navigate]);
 
   return <></>;
 };
