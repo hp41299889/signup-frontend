@@ -14,3 +14,8 @@ export const getEmailVerify = async (id: string, hash: string) => {
 export const postSignup = async (data: PostSignup) => {
   return await signupApi.post("/signup", data);
 };
+
+// DELETE
+export const deleteSignup = async (id: string) => {
+  return await signupApi.delete(`/signup/${id}`);
+};

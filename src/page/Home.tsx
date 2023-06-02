@@ -1,4 +1,4 @@
-import { Col, Divider, Image, Row, Typography } from "antd";
+import { Col, Image, Row, Typography } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -14,9 +14,10 @@ const { Title } = Typography;
 
 const Home: React.FC = () => {
   return (
-    <Row>
+    <Row justify={{ xs: "center", lg: "space-between" }}>
       <Col
         xs={24}
+        lg={6}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -29,9 +30,9 @@ const Home: React.FC = () => {
           點擊前往頁面
         </Link>
       </Col>
-      <Divider />
       <Col
         xs={24}
+        lg={6}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -44,9 +45,9 @@ const Home: React.FC = () => {
           點擊前往頁面
         </Link>
       </Col>
-      <Divider />
       <Col
         xs={24}
+        lg={6}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -59,9 +60,9 @@ const Home: React.FC = () => {
           點擊前往頁面
         </Link>
       </Col>
-      <Divider />
       <Col
         xs={24}
+        lg={6}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -74,9 +75,9 @@ const Home: React.FC = () => {
           點擊前往頁面
         </Link>
       </Col>
-      <Divider />
       <Col
         xs={24}
+        lg={6}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -92,9 +93,9 @@ const Home: React.FC = () => {
           點擊前往頁面
         </Link>
       </Col>
-      <Divider />
       <Col
         xs={24}
+        lg={6}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -110,9 +111,9 @@ const Home: React.FC = () => {
           點擊前往頁面
         </Link>
       </Col>
-      <Divider />
       <Col
         xs={24}
+        lg={6}
         style={{
           display: "flex",
           flexDirection: "column",
