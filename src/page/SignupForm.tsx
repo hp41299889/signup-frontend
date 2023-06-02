@@ -16,7 +16,7 @@ import {
 import { DefaultOptionType } from "antd/es/select";
 import React, { useState, useEffect } from "react";
 import { Session } from "../api/interface";
-import { getAllSessions, postSignup } from "../api/signup";
+import { deleteSignup, getAllSessions, postSignup } from "../api/signup";
 import { SignupFormData } from "./interface";
 import { useNavigate } from "react-router-dom";
 
@@ -79,9 +79,15 @@ const SignupForm: React.FC = () => {
   const onSessionChange = (e: RadioChangeEvent) => {
     const isSapplyShttle = sessions[e.target.value - 1].isShuttle;
     setShowShuttle(isSapplyShttle);
-    form.setFieldsValue({
-      isShuttle: null,
-    });
+    if (isSapplyShttle) {
+      form.setFieldsValue({
+        isShuttle: null,
+      });
+    } else {
+      form.setFieldsValue({
+        isShuttle: false,
+      });
+    }
   };
 
   const onFormSubmit = async (values: SignupFormData) => {
@@ -120,14 +126,43 @@ const SignupForm: React.FC = () => {
         console.error(err);
         Modal.error({
           title: <Text>報名失敗！</Text>,
+          okText: "我知道了",
           content: (
             <>
               <Text>錯誤：</Text>
               {err.response.data.message === "id is already exist" && (
-                <Text>此員編已重複報名</Text>
+                <>
+                  <p>此員編已重複報名</p>
+                </>
               )}
             </>
           ),
+          onOk: () => {
+            Modal.confirm({
+              title: "要刪除先前報名紀錄嗎？",
+              okText: "確認刪除",
+              cancelText: "返回",
+              content: "此動作會刪除先前的報名紀錄，即可以員編再次報名",
+              onOk: () => {
+                const id = form.getFieldValue("id");
+                deleteSignup(id)
+                  .then((res) => {
+                    Modal.success({
+                      title: "刪除報名紀錄成功！",
+                      okText: "確認",
+                      content:
+                        "已成功刪除先前報名紀錄，請再次以報名系統報名並進行信箱驗證",
+                      onOk: () => {
+                        navigate("/signup");
+                      },
+                    });
+                  })
+                  .catch((err) => {
+                    console.error(err);
+                  });
+              },
+            });
+          },
         });
       });
   };
@@ -148,140 +183,149 @@ const SignupForm: React.FC = () => {
 
   return (
     <Form form={form} onFinish={onFormSubmit} requiredMark={false}>
-      <Row gutter={[6, { xs: 0 }]}>
-        <Col xs={24}>
-          <Title>報名表單</Title>
-        </Col>
-        <Col xs={12}>
-          <Item
-            name="name"
-            label="姓名"
-            rules={[{ required: true, message: "請輸入姓名" }]}
-          >
-            <Input />
-          </Item>
-        </Col>
-        <Col xs={12}>
-          <Item
-            name="id"
-            label="員編"
-            rules={[{ required: true, message: "請輸入員編" }]}
-          >
-            <Input maxLength={6} />
-          </Item>
-        </Col>
-        <Col xs={12}>
-          <Item
-            name="phoneNumber"
-            label="行動電話"
-            rules={[{ required: true, message: "請輸入行動電話" }]}
-          >
-            <Input />
-          </Item>
-        </Col>
-        <Col xs={24}>
-          <Item
-            name="email"
-            label="EMAIL"
-            rules={[
-              { required: true, message: "請輸入EMAIL" },
-              { type: "email", message: "非法的EMAIL格式" },
-            ]}
-          >
-            <Input />
-          </Item>
-        </Col>
-        <Col xs={24}>
-          <Item
-            name="sessionId"
-            label="參加場次"
-            rules={[{ required: true, message: "請選擇參加場次" }]}
-          >
-            <Radio.Group onChange={onSessionChange}>
-              <Space direction="vertical">{renderSessionOption}</Space>
-            </Radio.Group>
-          </Item>
-        </Col>
-        <Col xs={24}>
-          <Item
-            name="joinNumber"
-            label="是否攜眷"
-            rules={[{ required: true, message: "請選擇是否攜眷" }]}
-          >
-            <Select
-              options={joinNumberOption}
-              onChange={onJoinNumberChange}
-              style={{ minWidth: "350px" }}
-            />
-          </Item>
-        </Col>
-        {showJoinNumberInput && (
-          <Col xs={24}>
-            <Item
-              name="extraJoinNumber"
-              label={
-                <>
-                  <Text>總參加人數</Text>
-                  <Text type="danger">(含自己)</Text>
-                </>
-              }
-              rules={[
-                { required: true, message: "請輸入總參加人數" },
-                {
-                  validator(_, value) {
-                    if (!Number.isInteger(Number(value))) {
-                      return Promise.reject(new Error("總參加人數必須是整數"));
-                    }
-                    if (value <= 3) {
-                      return Promise.reject(new Error("總參加人數必須大於3人"));
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-            >
-              <Input inputMode="numeric" type="number" />
-            </Item>
-          </Col>
-        )}
-        <Col xs={12}>
-          <Item
-            name="isParking"
-            label="有無停車"
-            rules={[{ required: true, message: "請選擇有無停車" }]}
-          >
-            <Radio.Group options={isParkingOption} />
-          </Item>
-        </Col>
-        <Col xs={12}>
-          <Item
-            name="isShuttle"
-            label="是否接駁"
-            rules={[{ required: true, message: "請選擇是否接駁" }]}
-          >
-            {showShuttle ? (
-              <Radio.Group options={isShuttleOption} />
-            ) : (
-              <Text type="danger">本場次不提供接駁</Text>
-            )}
-          </Item>
-        </Col>
-        <Col xs={{ span: 6, offset: 18 }}>
-          <Form.Item shouldUpdate>
-            {() => (
-              <Button
-                type="primary"
-                htmlType="submit"
-                disabled={
-                  !form.isFieldsTouched(true) ||
-                  !!form.getFieldsError().filter(({ errors }) => errors.length)
-                    .length
-                }
+      <Row>
+        <Col xs={24} lg={{ span: 12, offset: 6 }}>
+          <Row gutter={[6, { xs: 0 }]}>
+            <Col xs={24}>
+              <Title>報名表單</Title>
+            </Col>
+            <Col xs={12}>
+              <Item
+                name="name"
+                label="姓名"
+                rules={[{ required: true, message: "請輸入姓名" }]}
               >
-                送出
-              </Button>
+                <Input />
+              </Item>
+            </Col>
+            <Col xs={12}>
+              <Item
+                name="id"
+                label="員編"
+                rules={[{ required: true, message: "請輸入員編" }]}
+              >
+                <Input maxLength={6} />
+              </Item>
+            </Col>
+            <Col xs={10}>
+              <Item
+                name="phoneNumber"
+                label="行動電話"
+                rules={[{ required: true, message: "請輸入行動電話" }]}
+              >
+                <Input />
+              </Item>
+            </Col>
+            <Col xs={14}>
+              <Item
+                name="email"
+                label="EMAIL"
+                rules={[
+                  { required: true, message: "請輸入EMAIL" },
+                  { type: "email", message: "非法的EMAIL格式" },
+                ]}
+              >
+                <Input />
+              </Item>
+            </Col>
+            <Col xs={24}>
+              <Item
+                name="sessionId"
+                label="參加場次"
+                rules={[{ required: true, message: "請選擇參加場次" }]}
+              >
+                <Radio.Group onChange={onSessionChange}>
+                  <Space direction="vertical">{renderSessionOption}</Space>
+                </Radio.Group>
+              </Item>
+            </Col>
+            <Col xs={24}>
+              <Item
+                name="joinNumber"
+                label="是否攜眷"
+                rules={[{ required: true, message: "請選擇是否攜眷" }]}
+              >
+                <Select
+                  options={joinNumberOption}
+                  onChange={onJoinNumberChange}
+                  style={{ minWidth: "350px" }}
+                />
+              </Item>
+            </Col>
+            {showJoinNumberInput && (
+              <Col xs={24}>
+                <Item
+                  name="extraJoinNumber"
+                  label={
+                    <>
+                      <Text>總參加人數</Text>
+                      <Text type="danger">(含自己)</Text>
+                    </>
+                  }
+                  rules={[
+                    { required: true, message: "請輸入總參加人數" },
+                    {
+                      validator(_, value) {
+                        if (!Number.isInteger(Number(value))) {
+                          return Promise.reject(
+                            new Error("總參加人數必須是整數")
+                          );
+                        }
+                        if (value <= 3) {
+                          return Promise.reject(
+                            new Error("總參加人數必須大於3人")
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <Input inputMode="numeric" type="number" />
+                </Item>
+              </Col>
             )}
-          </Form.Item>
+            <Col xs={12}>
+              <Item
+                name="isParking"
+                label="有無停車"
+                rules={[{ required: true, message: "請選擇有無停車" }]}
+              >
+                <Radio.Group options={isParkingOption} />
+              </Item>
+            </Col>
+            <Col xs={12}>
+              <Item
+                name="isShuttle"
+                label="是否接駁"
+                rules={[{ required: true, message: "請選擇是否接駁" }]}
+              >
+                {showShuttle ? (
+                  <Radio.Group options={isShuttleOption} />
+                ) : (
+                  <Text type="danger">本場次不提供接駁</Text>
+                )}
+              </Item>
+            </Col>
+            <Col xs={{ span: 6, offset: 18 }}>
+              <Form.Item shouldUpdate>
+                {() => (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    disabled={
+                      !form.isFieldsTouched(true) ||
+                      !!form
+                        .getFieldsError()
+                        .filter(({ errors }) => errors.length).length
+                    }
+                  >
+                    送出
+                  </Button>
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </Form>
