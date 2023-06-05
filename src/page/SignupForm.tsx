@@ -118,6 +118,7 @@ const SignupForm: React.FC = () => {
             </>
           ),
           onOk: () => {
+            form.resetFields();
             navigate("/signup");
           },
         });
