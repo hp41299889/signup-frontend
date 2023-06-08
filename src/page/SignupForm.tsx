@@ -183,44 +183,49 @@ const SignupForm: React.FC = () => {
   }, []);
 
   return (
-    <Form form={form} onFinish={onFormSubmit} requiredMark={false}>
+    <Form
+      form={form}
+      onFinish={onFormSubmit}
+      requiredMark={false}
+      layout="vertical"
+    >
       <Row>
-        <Col xs={24} lg={{ span: 12, offset: 6 }}>
+        <Col xs={24} lg={{ span: 16, offset: 4 }}>
           <Row gutter={[6, { xs: 0 }]}>
             <Col xs={24}>
               <Title>報名表單</Title>
             </Col>
-            <Col xs={12}>
+            <Col xs={24} lg={8}>
               <Item
                 name="name"
-                label="姓名"
+                label="姓名：(請填寫與身分證件一致的姓名)"
                 rules={[{ required: true, message: "請輸入姓名" }]}
               >
                 <Input />
               </Item>
             </Col>
-            <Col xs={12}>
+            <Col xs={24} lg={{ span: 8, pull: 2, offset: 2 }}>
               <Item
                 name="id"
-                label="員編"
+                label="兆豐銀行員工編號：(6碼)"
                 rules={[{ required: true, message: "請輸入員編" }]}
               >
                 <Input maxLength={6} />
               </Item>
             </Col>
-            <Col xs={10}>
+            <Col xs={24} lg={8}>
               <Item
                 name="phoneNumber"
-                label="行動電話"
+                label="行動電話："
                 rules={[{ required: true, message: "請輸入行動電話" }]}
               >
                 <Input />
               </Item>
             </Col>
-            <Col xs={14}>
+            <Col xs={24} lg={16}>
               <Item
                 name="email"
-                label="EMAIL"
+                label="EMAIL：(請正確填寫稍後能接收由系統發送回覆郵件的Email信箱)"
                 rules={[
                   { required: true, message: "請輸入EMAIL" },
                   { type: "email", message: "非法的EMAIL格式" },
@@ -229,10 +234,10 @@ const SignupForm: React.FC = () => {
                 <Input />
               </Item>
             </Col>
-            <Col xs={24}>
+            <Col xs={24} lg={24}>
               <Item
                 name="sessionId"
-                label="參加場次"
+                label="參加場次："
                 rules={[{ required: true, message: "請選擇參加場次" }]}
               >
                 <Radio.Group onChange={onSessionChange}>
@@ -240,10 +245,10 @@ const SignupForm: React.FC = () => {
                 </Radio.Group>
               </Item>
             </Col>
-            <Col xs={24}>
+            <Col xs={24} lg={{ span: 16, pull: 16, offset: 16 }}>
               <Item
                 name="joinNumber"
-                label="是否攜眷"
+                label="是否攜眷：(每名兆豐員工可免費攜眷人數為2人，第3名家眷以上，每人需酌收$400元餐飲費，並於家庭日當天於報到處繳交)"
                 rules={[{ required: true, message: "請選擇是否攜眷" }]}
               >
                 <Select
@@ -254,12 +259,12 @@ const SignupForm: React.FC = () => {
               </Item>
             </Col>
             {showJoinNumberInput && (
-              <Col xs={24}>
+              <Col xs={24} lg={24}>
                 <Item
                   name="extraJoinNumber"
                   label={
                     <>
-                      <Text>總參加人數</Text>
+                      <Text>總參加人數：</Text>
                       <Text type="danger">(含自己)</Text>
                     </>
                   }
@@ -286,19 +291,19 @@ const SignupForm: React.FC = () => {
                 </Item>
               </Col>
             )}
-            <Col xs={12}>
+            <Col xs={12} lg={12}>
               <Item
                 name="isParking"
-                label="有無停車"
+                label="有無停車："
                 rules={[{ required: true, message: "請選擇有無停車" }]}
               >
                 <Radio.Group options={isParkingOption} />
               </Item>
             </Col>
-            <Col xs={12}>
+            <Col xs={12} lg={12}>
               <Item
                 name="isShuttle"
-                label="是否接駁"
+                label="是否搭乘接駁車："
                 rules={[{ required: true, message: "請選擇是否接駁" }]}
               >
                 {showShuttle ? (
