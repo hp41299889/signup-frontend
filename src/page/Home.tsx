@@ -1,4 +1,4 @@
-import { Col, Image, Row, Typography } from "antd";
+import { Col, Image, Row, Space, Typography } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -8,6 +8,7 @@ import Taipei_2 from "../asset/img/Taipei-2.jpg";
 import Yilan from "../asset/img/Yilan.jpg";
 import Kaohsiung from "../asset/img/Kaohsiung.jpg";
 import TaoChu from "../asset/img/TaoChu.jpg";
+import TaoChu_stay from "../asset/img/TaoChu_stay.png";
 import Tainan from "../asset/img/Tainan.jpg";
 
 const { Title, Paragraph } = Typography;
@@ -51,7 +52,12 @@ const Home: React.FC = () => {
         }}
       >
         <Title>{item.title}</Title>
-        <Image width={200} height={300} src={item.src} />
+        <Space>
+          <Image width={200} height={300} src={item.src} />
+          {item.title === "桃竹場" && (
+            <Image width={300} height={200} src={TaoChu_stay} />
+          )}
+        </Space>
         <Link
           to={item.hyperLink}
           style={{
