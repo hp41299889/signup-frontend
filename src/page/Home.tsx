@@ -2,14 +2,14 @@ import { Col, Image, Row, Space, Typography } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 
-import Taipei_1 from "../asset/img/Taipei-1.jpg";
-import ZongChang from "../asset/img/ZongChang.jpg";
-import Taipei_2 from "../asset/img/Taipei-2.jpg";
-import Yilan from "../asset/img/Yilan.jpg";
-import Kaohsiung from "../asset/img/Kaohsiung.jpg";
-import TaoChu from "../asset/img/TaoChu.jpg";
+import Taipei_1 from "../asset/img/Taipei-1.png";
+import ZongChang from "../asset/img/ZongChang.png";
+import Taipei_2 from "../asset/img/Taipei-2.png";
+import Yilan from "../asset/img/Yilan.png";
+import Kaohsiung from "../asset/img/Kaohsiung.png";
+import TaoChu from "../asset/img/TaoChu.png";
 import TaoChu_stay from "../asset/img/TaoChu_stay.png";
-import Tainan from "../asset/img/Tainan.jpg";
+import Tainan from "../asset/img/Tainan.png";
 
 const { Title, Paragraph } = Typography;
 
