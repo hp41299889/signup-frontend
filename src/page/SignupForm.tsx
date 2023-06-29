@@ -208,7 +208,10 @@ const SignupForm: React.FC = () => {
               <Item
                 name="id"
                 label="兆豐銀行員工編號：(6碼)"
-                rules={[{ required: true, message: "請輸入員編" }]}
+                rules={[
+                  { required: true, message: "請輸入員編" },
+                  { min: 6, message: "員編長度不符合" },
+                ]}
               >
                 <Input maxLength={6} />
               </Item>
@@ -217,9 +220,12 @@ const SignupForm: React.FC = () => {
               <Item
                 name="phoneNumber"
                 label="行動電話："
-                rules={[{ required: true, message: "請輸入行動電話" }]}
+                rules={[
+                  { required: true, message: "請輸入行動電話" },
+                  { min: 10, message: "行動電話長度不符合" },
+                ]}
               >
-                <Input />
+                <Input maxLength={10} />
               </Item>
             </Col>
             <Col xs={24} lg={16}>
