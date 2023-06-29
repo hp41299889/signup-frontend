@@ -82,6 +82,7 @@ const Home: React.FC = () => {
           <ul>
             <li>報名資訊僅供本次活動聯絡及報到系統使用。</li>
             <li>每名兆豐員工可免費攜眷人數為2人。</li>
+            <li>每人限定報名1場次</li>
             <li style={{ color: "red", fontWeight: 800 }}>
               報名完成後，請務必在您的Email確認收到您的報名表單，並點及驗證連結。
             </li>
