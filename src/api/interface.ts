@@ -3,6 +3,7 @@ export interface Session {
   name: string;
   place: string;
   joinLimit: number;
+  activityDate: Date;
   remainingNumber: number;
   isParking: boolean;
   isShuttle: boolean;

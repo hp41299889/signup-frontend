@@ -19,6 +19,7 @@ import { Session } from "../api/interface";
 import { deleteSignup, getAllSessions, postSignup } from "../api/signup";
 import { SignupFormData } from "./interface";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 const { Text, Title } = Typography;
 const { Item, useForm } = Form;
@@ -40,13 +41,16 @@ const SignupForm: React.FC = () => {
   const [showShuttle, setShowShuttle] = useState<boolean>(true);
   const [showJoinNumberInput, setShowJoinNumberInput] =
     useState<boolean>(false);
+  console.log(sessions);
 
   const renderSessionOption = sessions.map((session) => {
-    const { id, name, remainingNumber } = session;
+    const { id, name, place, activityDate, remainingNumber } = session;
     return (
       <Radio value={id} key={`radio_${id}`}>
         <Text>
-          {name} <Divider type="vertical" />
+          {name} {dayjs(activityDate).format("M月D日")}
+          {`(${place})`}
+          <Divider type="vertical" />
           剩餘名額：{remainingNumber}
         </Text>
       </Radio>
