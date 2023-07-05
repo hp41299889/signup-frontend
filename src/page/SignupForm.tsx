@@ -41,7 +41,7 @@ const SignupForm: React.FC = () => {
   const [showShuttle, setShowShuttle] = useState<boolean>(true);
   const [showJoinNumberInput, setShowJoinNumberInput] =
     useState<boolean>(false);
-  console.log(sessions);
+  const deadline = dayjs("2023-07-05");
 
   const renderSessionOption = sessions.map((session) => {
     const { id, name, place, activityDate, remainingNumber } = session;
@@ -171,6 +171,18 @@ const SignupForm: React.FC = () => {
         });
       });
   };
+
+  useEffect(() => {
+    if (dayjs().isSame(deadline, "day") || dayjs().isAfter(deadline, "day")) {
+      Modal.error({
+        title: "錯誤",
+        content: "報名已截止！",
+        onOk: () => {
+          navigate("/home");
+        },
+      });
+    }
+  }, []);
 
   useEffect(() => {
     getAllSessions()
