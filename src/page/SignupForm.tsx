@@ -182,7 +182,7 @@ const SignupForm: React.FC = () => {
         },
       });
     }
-  }, []);
+  }, [navigate, deadline]);
 
   useEffect(() => {
     getAllSessions()
