@@ -46,7 +46,7 @@ const SignupForm: React.FC = () => {
   const renderSessionOption = sessions.map((session) => {
     const { id, name, place, activityDate, remainingNumber } = session;
     return (
-      <Radio value={id} key={`radio_${id}`}>
+      <Radio value={id} key={`radio_${id}`} disabled={remainingNumber <= 0}>
         <Text>
           {name} {dayjs(activityDate).format("M月D日")}
           {`(${place})`}
