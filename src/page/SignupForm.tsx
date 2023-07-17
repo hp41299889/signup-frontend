@@ -51,7 +51,7 @@ const SignupForm: React.FC = () => {
           {name} {dayjs(activityDate).format("M月D日")}
           {`(${place})`}
           <Divider type="vertical" />
-          剩餘名額：{remainingNumber}
+          剩餘名額：{remainingNumber <= 0 ? 0 : remainingNumber}
         </Text>
       </Radio>
     );
