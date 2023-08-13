@@ -41,7 +41,7 @@ const SignupForm: React.FC = () => {
   const [showShuttle, setShowShuttle] = useState<boolean>(true);
   const [showJoinNumberInput, setShowJoinNumberInput] =
     useState<boolean>(false);
-  const deadline = dayjs("2023-07-22");
+  const deadline = dayjs("2023-08-13").set("hour", 22);
 
   const renderSessionOption = sessions.map((session) => {
     const { id, name, place, activityDate, remainingNumber } = session;
@@ -173,7 +173,7 @@ const SignupForm: React.FC = () => {
   };
 
   useEffect(() => {
-    if (dayjs().isSame(deadline, "day") || dayjs().isAfter(deadline, "day")) {
+    if (dayjs().isSame(deadline) || dayjs().isAfter(deadline)) {
       Modal.error({
         title: "錯誤",
         content: "報名已截止！",
