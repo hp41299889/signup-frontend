@@ -41,7 +41,7 @@ const SignupForm: React.FC = () => {
   const [showShuttle, setShowShuttle] = useState<boolean>(true);
   const [showJoinNumberInput, setShowJoinNumberInput] =
     useState<boolean>(false);
-  const deadline = dayjs("2023-10-13").set("hour", 22).set("minute", 30);
+  const deadline = dayjs("2023-11-2").set("hour", 20);
 
   const renderSessionOption = sessions.map((session) => {
     const { id, name, place, activityDate, remainingNumber } = session;
